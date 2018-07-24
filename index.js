@@ -1,6 +1,12 @@
 const express = require('express');
 const app = express();
 const compression = require('compression');
+const bodyParser = require ('body-parser');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.use(express.static('public'));
 
 app.use(compression());
 
@@ -14,6 +20,11 @@ if (process.env.NODE_ENV != 'production') {
 } else {
     app.use('/bundle.js', (req, res) => res.sendFile(`${__dirname}/bundle.js`));
 }
+
+app.post('/registration', (req, res) => {
+    console.log("inside POST /registration", req.body);
+})
+
 
 app.get('*', function(req, res) {
     res.sendFile(__dirname + '/index.html');
