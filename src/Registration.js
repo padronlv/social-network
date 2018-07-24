@@ -19,7 +19,10 @@ class Registration extends Component {
     handleSubmit(e) {
         e.preventDefault();
         console.log("Running handleSubmit", this.state);
-        axios.post('/registration', this.state);
+        axios.post('/registration', this.state)
+            .then(() => {
+                location.replace('/');
+            });
     }
     render() {
         return(
