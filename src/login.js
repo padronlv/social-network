@@ -3,15 +3,11 @@ import axios from './axios';
 import { Link } from 'react-router-dom';
 
 
-class Registration extends Component {
+class Login extends Component {
     constructor() {
         super();
         this.state = {
-            error: null,
-            firstName: "",
-            lastName: "",
-            email: "",
-            password: ""
+            error: null
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -28,7 +24,7 @@ class Registration extends Component {
     handleSubmit(e) {
         e.preventDefault();
         console.log("Running handleSubmit", this.state);
-        axios.post('/registration', this.state)
+        axios.post('/login', this.state)
             .then((resp) => {
                 if (resp.data.error) {
                     this.setState({
@@ -42,20 +38,18 @@ class Registration extends Component {
     render() {
         return(
             <div className="">
-                <h1>Registration</h1>
+                <h1>Login</h1>
                 {
                     this.state.error
                         ? <div>ERROR: { this.state.error }</div>
                         : null
                 }
                 <form onSubmit={ this.handleSubmit } className="">
-                    <input onChange={ this.handleChange } type="text" name="firstName" placeholder="name"/>
-                    <input onChange={ this.handleChange } type="text" name="lastName" placeholder="last name"/>
-                    <input onChange={ this.handleChange } type="email" name="email" placeholder="email"/>
-                    <input onChange={ this.handleChange } type="password" name="password" placeholder="password" />
+                    <input onChange={ this.handleChange } type="text" name="email" placeholder="email"/>
+                    <input onChange={ this.handleChange } type="text" name="password" placeholder="password" />
                     <button type="submit">Submit</button>
                 </form>
-                <Link to="/login">Click here to Log in!</Link>
+                <Link to="/">You do not have an Account, click here to register</Link>
 
             </div>
         );
@@ -63,4 +57,4 @@ class Registration extends Component {
 
 }
 
-export default Registration;
+export default Login;

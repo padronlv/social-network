@@ -1,12 +1,20 @@
 import React from 'react';
-import Registration from './Registration';
+
+import { HashRouter, Route } from 'react-router-dom';
+import Registration from './registration';
+import Login from './login';
 
 function Welcome() {
     return (
-        <div>
-            <h1>Welcome</h1>
-
-            <Registration />
+        <div id="welcome">
+            <h1>Welcome!</h1>
+            <img src="./images/logo.png" />
+            <HashRouter>
+                <div>
+                    <Route exact path="/" component={Registration} />
+                    <Route exact path="/login" component={Login} />
+                </div>
+            </HashRouter>
         </div>
     );
 }

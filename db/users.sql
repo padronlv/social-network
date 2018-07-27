@@ -6,5 +6,7 @@ CREATE TABLE users (
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     hashed_password VARCHAR(100) NOT NULL,
+    profile_pic VARCHAR(300),
+    bio VARCHAR(1000),
     create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

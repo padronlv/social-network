@@ -4,7 +4,7 @@ var db;
 if(process.env.DATABASE_URL) {
     db = spicedPg(process.env.DATABASE_URL);
 } else {
-    db = spicedPg('postgres:Victor:postgres@localhost:5432/petition');
+    db = spicedPg('postgres:Victor:postgres@localhost:5432/socialnetwork');
 }
 
 
@@ -19,6 +19,7 @@ module.exports.insertUser = function (firstName, lastName, email, password) {
     const params = [ firstName || null , lastName || null, email || null, password || null];
     return db.query(q, params)
         .then(results => {
+            console.log(results.rows);
             return results.rows[0];
         })
         .catch(err => {
@@ -103,8 +104,6 @@ module.exports.getYourUserInfo = function (userId) {
     const q = `
     SELECT *
     FROM users
-    LEFT JOIN profiles
-    ON users.id = profiles.user_id
     WHERE users.id = $1
     `;
     const params = [userId];
@@ -114,34 +113,38 @@ module.exports.getYourUserInfo = function (userId) {
         });
 };
 
-module.exports.insertProfile = function (userId, age, city, url) {
+module.exports.addImage = function (userId, url) {
     const q = `
-        INSERT INTO profiles (user_id, age, city, url)
-            VALUES ($1, $2, $3, $4)
-            RETURNING *
+    UPDATE users
+    SET profile_pic = $2
+    WHERE id = $1
+    RETURNING *
     `;
-    const params = [userId || null , parseInt(age) || null, city || null, url || null];
-    console.log(userId, parseInt(age), city, url);
+    const params = [ userId || null , url || null];
     return db.query(q, params)
         .then(results => {
             return results.rows[0];
         })
         .catch(err => {
-            console.log("this is workinggggggggggggggggg");
+            // console.log("this is workinggggggggggggggggg");
             return Promise.reject(err);
         });
 };
-module.exports.deleteSignature = function (userId) {
+
+module.exports.addBio = function (userId, bio) {
     const q = `
-    DELETE FROM signatures
-    WHERE user_id = $1;
+    UPDATE users
+    SET bio = $2
+    WHERE id = $1
+    RETURNING *
     `;
-    const params = [userId];
-    console.log(userId);
+    const params = [ userId || null , bio || null];
     return db.query(q, params)
-        .then()
+        .then(results => {
+            return results.rows[0];
+        })
         .catch(err => {
-            console.log("error deleting signature");
+            // console.log("this is workinggggggggggggggggg");
             return Promise.reject(err);
         });
 };
