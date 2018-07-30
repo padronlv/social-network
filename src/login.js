@@ -37,14 +37,14 @@ class Login extends Component {
     }
     render() {
         return(
-            <div className="">
+            <div className="login">
                 <h1>Login</h1>
                 {
                     this.state.error
                         ? <div>ERROR: { this.state.error }</div>
                         : null
                 }
-                <form onSubmit={ this.handleSubmit } className="">
+                <form onSubmit={ this.handleSubmit } className="form loginForm">
                     <input onChange={ this.handleChange } type="text" name="email" placeholder="email"/>
                     <input onChange={ this.handleChange } type="text" name="password" placeholder="password" />
                     <button type="submit">Submit</button>
