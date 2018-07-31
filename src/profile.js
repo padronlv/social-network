@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import axios from './axios';
+import ProfilePic from './profilepic';
+import Uploader from './uploader';
 
 class Profile extends Component{
     constructor() {
@@ -41,7 +43,10 @@ class Profile extends Component{
             image,
             showBio,
             toggleShowBio,
-            bio
+            bio,
+            showUploader,
+            uploaderIsVisible,
+            setImage
         } = this.props;
 
 
@@ -49,6 +54,15 @@ class Profile extends Component{
             <div id="profile">
                 <h1>Profile</h1>
                 <p>{ first } { last }</p>
+                <ProfilePic
+                    image={image}
+                    first={first}
+                    last={last}
+                    clickHandler={showUploader}
+                />
+                {uploaderIsVisible && <Uploader setImage={setImage} />}
+
+
                 { showBio
                     ? <form onSubmit={ this.handleSubmitTextarea } className="">
                         <textarea name="bio" defaultValue={ bio } onChange={ this.handleChangeTextarea }></textarea>

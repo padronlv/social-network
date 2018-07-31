@@ -7,13 +7,15 @@ import NavLogout from './navLogout';
 function Welcome() {
     return (
         <div id="welcome">
-            <NavLogout />
-            <h1>Welcome!</h1>
-            <img className="bigLogo" src="./images/logo.png" />
             <HashRouter>
                 <div>
-                    <Route exact path="/" component={Registration} />
-                    <Route exact path="/login" component={Login} />
+                    <NavLogout />
+                    <div className="welcomeNoNav">
+                        <h1>Welcome!</h1>
+                        <img className="bigLogo" src="./images/logo.png" />
+                        <Route exact path="/" component={Registration} />
+                        <Route exact path="/login" component={Login} />
+                    </div>
                 </div>
             </HashRouter>
         </div>

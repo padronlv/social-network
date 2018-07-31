@@ -5,8 +5,8 @@ function NavLogout() {
     return (
         <nav className="nav">
             <ul>
-                {/*<li><Link to="/">Registration</Link></li>
-                <li><Link to="/login">Log in!</Link></li>*/}
+                <li><Link to="/">Registration</Link></li>
+                <li><Link to="/login">Log in!</Link></li>
             </ul>
         </nav>
     );

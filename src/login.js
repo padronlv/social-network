@@ -45,9 +45,17 @@ class Login extends Component {
                         : null
                 }
                 <form onSubmit={ this.handleSubmit } className="form loginForm">
-                    <input onChange={ this.handleChange } type="text" name="email" placeholder="email"/>
-                    <input onChange={ this.handleChange } type="text" name="password" placeholder="password" />
-                    <button type="submit">Submit</button>
+                    <div className="fieldEdit">
+                        <h3 className="param">Email</h3>
+                        <input className="input" onChange={ this.handleChange } type="email" name="email" placeholder="email"/>
+                    </div>
+                    <div className="fieldEdit">
+                        <h3 className="param">Password</h3>
+                        <input className="input" onChange={ this.handleChange } type="password" name="password" placeholder="password" />
+                    </div>
+
+
+                    <button className="submitButton" type="submit">Submit</button>
                 </form>
                 <Link to="/">You do not have an Account, click here to register</Link>
 

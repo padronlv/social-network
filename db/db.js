@@ -89,7 +89,7 @@ module.exports.editProfile = function (userId, age, city, url) {
 
 
 
-module.exports.getYourUser = function (email) {
+module.exports.getYourUserByEmail = function (email) {
     const q = `
         SELECT * FROM users WHERE email = $1
     `;
@@ -141,6 +141,96 @@ module.exports.addBio = function (userId, bio) {
     const params = [ userId || null , bio || null];
     return db.query(q, params)
         .then(results => {
+            return results.rows[0];
+        })
+        .catch(err => {
+            // console.log("this is workinggggggggggggggggg");
+            return Promise.reject(err);
+        });
+};
+
+module.exports.checkFriendship = function (senderId, receiverId) {
+    const q = `
+    SELECT * FROM friendships
+    WHERE ((sender_id =$1 AND receiver_id =$2)
+    OR (sender_id = $2 AND receiver_id = $1))
+    `;
+    const params = [ senderId || null , receiverId || null];
+    return db.query(q, params)
+        .then(results => {
+            return results.rows[0];
+        })
+        .catch(err => {
+            // console.log("this is workinggggggggggggggggg");
+            return Promise.reject(err);
+        });
+};
+module.exports.insertFriendshipRequest = function (senderId, receiverId) {
+    const q = `
+        INSERT INTO friendships (sender_id, receiver_id)
+            VALUES ($1, $2)
+            RETURNING *
+    `;
+    const params = [ senderId || null , receiverId || null];
+    return db.query(q, params)
+        .then(results => {
+            console.log(results.rows);
+            return results.rows[0];
+        })
+        .catch(err => {
+            // console.log("this is workinggggggggggggggggg");
+            return Promise.reject(err);
+        });
+};
+
+module.exports.acceptFriendshipRequest = function (senderId, receiverId) {
+    const q = `
+    UPDATE friendships
+    SET STATUS = 2
+    WHERE  ((sender_id =$1 AND receiver_id =$2)
+    OR (sender_id = $2 AND receiver_id = $1))
+    RETURNING *
+    `;
+    const params = [ senderId || null , receiverId || null];
+    return db.query(q, params)
+        .then(results => {
+            console.log(results.rows);
+            return results.rows[0];
+        })
+        .catch(err => {
+            // console.log("this is workinggggggggggggggggg");
+            return Promise.reject(err);
+        });
+};
+
+module.exports.cancelFriendshipRequest = function (senderId, receiverId) {
+    const q = `
+    DELETE FROM friendships
+    WHERE  ((sender_id =$1 AND receiver_id =$2)
+    OR (sender_id = $2 AND receiver_id = $1))
+    `;
+    const params = [ senderId || null , receiverId || null];
+    return db.query(q, params)
+        .then(results => {
+            console.log(results.rows);
+            return results.rows[0];
+        })
+        .catch(err => {
+            // console.log("this is workinggggggggggggggggg");
+            return Promise.reject(err);
+        });
+};
+
+module.exports.deleteFriendship = function (senderId, receiverId) {
+    const q = `
+    DELETE FROM friendships
+    WHERE  ((sender_id =$1 AND receiver_id =$2)
+    OR (sender_id = $2 AND receiver_id = $1))
+    `;
+    const params = [ senderId || null , receiverId || null];
+    return db.query(q, params)
+        .then(results => {
+            console.log(results.rows);
             return results.rows[0];
         })
         .catch(err => {

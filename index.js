@@ -57,6 +57,96 @@ app.get('/user', function(req, res) {
     });
 });
 
+app.get('/friendship/:id', function(req, res) {
+    db.checkFriendship(req.session.userId, req.params.id)
+        .then(data => {
+            console.log(data);
+            res.json(data);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+});
+
+app.post('/friendship/:id', (req, res) => {
+    if (req.body.friendshipStatus == 'friends') {
+        db.deleteFriendship (req.session.userId, req.params.id)
+            .then(UpdatedFriendshipInfo => {
+                // console.log(image);
+                res.json ({
+                    success: true,
+                    status: null,
+                    buttonText: 'send a friend request',
+                    info: UpdatedFriendshipInfo
+                });
+            }).catch(
+                () => res.sendStatus(500)
+            );
+
+    } else if (req.body.friendshipStatus == 'pendingAsReceiver') {
+        db.acceptFriendshipRequest (req.session.userId, req.params.id)
+            .then(UpdatedFriendshipInfo => {
+                // console.log(image);
+                res.json ({
+                    success: true,
+                    status: 'friends',
+                    buttonText: 'unfriend',
+                    info: UpdatedFriendshipInfo
+                });
+            }).catch(
+                () => res.sendStatus(500)
+            );
+
+    } else if (req.body.friendshipStatus == 'pendingAsSender') {
+        db.cancelFriendshipRequest (req.session.userId, req.params.id)
+            .then(UpdatedFriendshipInfo => {
+                // console.log(image);
+                res.json ({
+                    success: true,
+                    status: null,
+                    buttonText: 'send a friend request',
+                    info: UpdatedFriendshipInfo
+                });
+            }).catch(
+                () => res.sendStatus(500)
+            );
+    } else {
+        db.insertFriendshipRequest (req.session.userId, req.params.id)
+            .then(UpdatedFriendshipInfo => {
+                // console.log(image);
+                res.json ({
+                    success: true,
+                    status: 'pendingAsSender',
+                    buttonText: 'Cancel request for friendship',
+                    info: UpdatedFriendshipInfo
+                });
+            }).catch(
+                () => res.sendStatus(500)
+            );
+    }
+});
+
+
+
+app.get('/user/:id.json', function(req, res) {
+    if (req.session.userId == req.params.id) {
+        res.json({
+            redirect: '/'
+        });
+    } else {
+        db.getYourUserInfo(req.params.id).then(
+            data => {
+                // console.log("working");
+                res.json({
+                    ...data,
+                    profile_pic: data.profile_pic || '/images/default.png'
+
+                });
+            }).catch(error => {
+            console.log(error);
+        });
+    }
+});
 
 const diskStorage = multer.diskStorage({
     destination: function (req, file, callback) {
@@ -141,7 +231,7 @@ app.post('/registration', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    db.getYourUser(req.body.email)
+    db.getYourUserByEmail(req.body.email)
         .then(user => {
             if(user == undefined) {
                 console.log("posting is working");
@@ -188,17 +278,6 @@ app.get('/logout', (req, res) => {
     res.redirect('/welcome');
 });
 
-
-app.get("/user", requireUser, function(req, res) {
-    db.getYourUserInfo(req.session.userId)
-        .then(userInfo => {
-            // console.log(userInfo);
-            res.json(userInfo);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-});
 
 
 

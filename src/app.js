@@ -1,10 +1,9 @@
 import React from 'react';
-import Logo from './logo';
-import ProfilePic from './profilepic';
 import axios from './axios';
-import Uploader from './uploader';
 import { BrowserRouter, Route } from 'react-router-dom';
 import Profile from './profile';
+import Opp from './opp';
+import NavLogin from './navLogin';
 
 class App extends React.Component {
     constructor(props) {
@@ -18,6 +17,7 @@ class App extends React.Component {
         this.setBio = this.setBio.bind(this);
     }
     showUploader() {
+        console.log("showUploader")
         this.setState({
             uploaderIsVisible: true
         });
@@ -68,28 +68,27 @@ class App extends React.Component {
             <div id="app">
                 <BrowserRouter>
                     <div>
+                        <NavLogin image={image}
+                            first={first}
+                            last={last} />
                         <Route path='/profile' render={() => (
                             <Profile
                                 id={ id }
                                 first={ first }
                                 last={ last }
-                                profilePic={ image }
+                                image={ image }
                                 bio={this.state.bio}
                                 showBio={this.state.showBio}
                                 toggleShowBio={this.toggleShowBio}
                                 setBio={this.setBio}
+                                setImage={this.setImage}
+                                showUploader={this.showUploader}
+                                uploaderIsVisible={this.state.uploaderIsVisible}
                             />
                         )} />
+                        <Route path="/user/:id" component={Opp} />
                     </div>
                 </BrowserRouter>
-                <Logo />
-                <ProfilePic
-                    image={this.state.image}
-                    first={this.state.first}
-                    last={this.state.last}
-                    clickHandler={this.showUploader}
-                />
-                {this.state.uploaderIsVisible && <Uploader setImage={this.setImage} />}
             </div>
         );
     }
