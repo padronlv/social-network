@@ -25,16 +25,38 @@ export async function endFriendship(id) {
     };
 }
 
+export function pushOnlineUsersToRedux(onlineUsers) {
+    return {
+        type: 'PUSH_ONLINE_USERS_TO_REDUX',
+        onlineUsers
+
+    };
+}
 export function userJoined (user) {
+    console.log('userjoined' , user);
     return {
         type:'USER_JOINED',
         user
-    }
+    };
 }
 
-export function pushOnlineUsersToRedux() {
+export function userLeft (user) {
+    console.log('userLeft' , user);
     return {
-        type: ''
-        
-    }
+        type:'USER_LEFT',
+        user
+    };
+}
+export function pushChatMessagesToRedux(chatMessages) {
+    return {
+        type: 'PUSH_CHAT_MESSAGES_TO_REDUX',
+        chatMessages
+    };
+}
+export function newMessageAction (chatMessage) {
+    console.log('newMessage' , chatMessage);
+    return {
+        type:'NEW_MESSAGE',
+        chatMessage
+    };
 }

@@ -254,3 +254,12 @@ module.exports.deleteFriendship = function (senderId, receiverId) {
             return Promise.reject(err);
         });
 };
+
+module.exports.getUsersByIds = function(arrayOfIds) {
+    const query = `SELECT * FROM users WHERE id = ANY($1)`;
+    return db.query(query, [arrayOfIds])
+        .then(results => {
+            console.log(results.rows);
+            return results.rows;
+        });
+};

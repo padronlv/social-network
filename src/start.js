@@ -9,6 +9,7 @@ import reducer from './reducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import  { init } from './socket';
 
+const store = createStore(reducer, composeWithDevTools(applyMiddleware(reduxPromise)));
 if (location.pathname != '/welcome') {
     init(store);
 }
@@ -24,7 +25,6 @@ if (location.pathname != '/welcome') {
 //     });
 // });
 
-const store = createStore(reducer, composeWithDevTools(applyMiddleware(reduxPromise)));
 
 let component;
 

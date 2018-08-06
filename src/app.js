@@ -4,6 +4,8 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import Profile from './profile';
 import Opp from './opp';
 import Friends from './friends';
+import Chat from './chat';
+import Online from './online';
 import NavLogin from './navLogin';
 
 class App extends React.Component {
@@ -89,6 +91,8 @@ class App extends React.Component {
                         )} />
                         <Route path="/user/:id" component={Opp} />
                         <Route path="/friends" component={Friends} />
+                        <Route path='/online' component= {Online} />
+                        <Route path="/chat" component={Chat} />
 
 
                     </div>

@@ -17,11 +17,15 @@ const config = require('./config');
 
 app.use(cookieParser());
 
-app.use(cookieSession({
+const cookieSessionMiddleware = cookieSession({
     secret: `I'm always angry.`,
-    maxAge: 1000 * 60 * 60 * 24 * 14
-}));
+    maxAge: 1000 * 60 * 60 * 24 * 90
+});
 
+app.use(cookieSessionMiddleware);
+io.use(function(socket, next) {
+    cookieSessionMiddleware(socket.request, socket.request.res, next);
+});
 app.use(csurf());
 
 app.use(function(req, res, next){
@@ -64,7 +68,7 @@ app.get('/user', function(req, res) {
 });
 
 app.get('/friendsList', function(req, res) {
-    console.log("app get friendsList")
+    // console.log("app get friendsList");
     db.getYourFriends(req.session.userId)
         .then(
             data => {
@@ -89,7 +93,7 @@ app.get('/friendship/:id', function(req, res) {
 });
 
 app.post('/friendship/:id', (req, res) => {
-    console.log("post request friendship", req.body)
+    // console.log("post request friendship", req.body);
     if (req.body.friendshipStatus == 'friends') {
         db.deleteFriendship (req.session.userId, req.params.id)
             .then(UpdatedFriendshipInfo => {
@@ -318,38 +322,84 @@ server.listen(8080, function() {
     console.log("I'm listening.");
 });
 
-let onlineUsers;
+let onlineUsers = {};
+let chatMessages = [];
 
 io.on('connection', function(socket) {
     console.log(`socket with the id ${socket.id} is now connected`);
+    console.log(`socket with the id ${socket.request.session.userId} is now connected`);
+    onlineUsers[socket.id]= socket.request.session.userId;
+    // console.log(onlineUsers);
+    db.getUsersByIds(Object.values(onlineUsers)).then(users => {
+        console.log('users in dbquery for socket', users);
+        socket.emit("onlineUsers", users);
 
+    });
+    socket.emit("chatMessages", chatMessages);
 
+    if (
+        Object.values(onlineUsers).filter(id => id == socket.request.session.userId).length == 1
+    ) {
+        db.getYourUserInfo(socket.request.session.userId).then(
+            data => {
+                socket.broadcast.emit("userJoined", data);
+                // console.log("data get your user info ", data);
+
+            }).catch(error => {
+            console.log(error);
+        });
+
+    }
     socket.on('disconnect', function() {
+
+        if (
+            Object.values(onlineUsers).filter(id => id == socket.request.session.userId).length == 1
+        ) {
+            db.getYourUserInfo(socket.request.session.userId).then(
+                data => {
+                    socket.broadcast.emit("userLeft", data);
+                    // console.log("data get your user info ", data);
+
+                }).catch(error => {
+                console.log(error);
+            });
+
+        }
         delete onlineUsers[socket.id];
-        io.emit('userLeft', userId)
+        // io.emit('userLeft', userId);
         console.log(`socket with the id ${socket.id} is now disconnected`);
+
     });
 
+    socket.on('newMessage', function (newMessage) {
+        let completNewMessage = {
+            userId: socket.request.session.userId,
+            content: newMessage,
+            date: new Date()
+        };
+
+        chatMessages = [...chatMessages, completNewMessage]
+        io.sockets.emit('newMessageBack', completNewMessage);
+
+    })
 
 
-    socket.on('thanks', function(data) {
-        console.log(data);
-    });
+
+    // socket.on('thanks', function(data) {
+    //     console.log(data);
+    // });
     // io.sockets.emit (for everyone)
     // io.sockects.socket[.....] (for someone)
-    // socket.broadcast.emit("userjoined")
 
 
 
-    socket.emit('welcome', {
-        message: 'Welome. It is nice to see you'
-    });
+    // socket.emit('welcome', {
+    //     message: 'Welome. It is nice to see you'
+    // });
 
-    socket.emit('onlineUsers', onlineUsers)
-
-    socket.on('chatMsg', data => {
-        store.dispatch()
-    })
+    // socket.on('chatMsg', data => {
+    //     store.dispatch();
+    // });
     // socket.on('privateMessage', data => {
     //     io.sockets.sockets[data.socketId].emit('privateMessage'),
     // })
