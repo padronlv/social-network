@@ -44,7 +44,7 @@ class FriendshipButton extends Component {
     }
 
     clickFriendshipButton () {
-        console.log('button friendship')
+        // console.log('button friendship');
         axios.post('/friendship/'+ this.props.otherUserId, this.state)
             .then((resp) => {
                 if (resp.data.success) {

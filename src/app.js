@@ -3,6 +3,7 @@ import axios from './axios';
 import { BrowserRouter, Route } from 'react-router-dom';
 import Profile from './profile';
 import Opp from './opp';
+import Friends from './friends';
 import NavLogin from './navLogin';
 
 class App extends React.Component {
@@ -17,7 +18,7 @@ class App extends React.Component {
         this.setBio = this.setBio.bind(this);
     }
     showUploader() {
-        console.log("showUploader")
+        // console.log("showUploader")
         this.setState({
             uploaderIsVisible: true
         });
@@ -87,6 +88,9 @@ class App extends React.Component {
                             />
                         )} />
                         <Route path="/user/:id" component={Opp} />
+                        <Route path="/friends" component={Friends} />
+
+
                     </div>
                 </BrowserRouter>
             </div>

@@ -113,6 +113,22 @@ module.exports.getYourUserInfo = function (userId) {
         });
 };
 
+module.exports.getYourFriends = function (userId) {
+    const q = `
+         SELECT users.id, users.first_name, users.last_name, users.profile_pic, friendships.status
+         FROM friendships
+         JOIN users
+         ON (status = 1 AND receiver_id = $1 AND sender_id = users.id)
+         OR (status = 2 AND receiver_id = $1 AND sender_id = users.id)
+         OR (status = 2 AND sender_id = $1 AND receiver_id = users.id)
+     `;
+    const params = [userId];
+    return db.query(q, params)
+        .then(results => {
+            return results.rows;
+        });
+};
+
 module.exports.addImage = function (userId, url) {
     const q = `
     UPDATE users

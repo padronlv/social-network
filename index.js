@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server, { origins: 'localhost:8080' });
 const compression = require('compression');
 const db = require('./db/db');
 const cookieParser = require('cookie-parser');
@@ -49,12 +51,30 @@ if (process.env.NODE_ENV != 'production') {
 
 app.get('/user', function(req, res) {
     db.getYourUserInfo(req.session.userId).then(
-        data => res.json({
-            ...data,
-            profile_pic: data.profile_pic || '/images/default.png'
-        })).catch(error => {
+        data => {
+            // console.log("data get your user info ", data);
+            res.json({
+                ...data,
+                profile_pic: data.profile_pic || '/images/default.png'
+
+            });
+        }).catch(error => {
         console.log(error);
     });
+});
+
+app.get('/friendsList', function(req, res) {
+    console.log("app get friendsList")
+    db.getYourFriends(req.session.userId)
+        .then(
+            data => {
+                console.log("get your friends ", data);
+                res.json(data);
+            })
+
+        .catch(error => {
+            console.log("error in get your friends", error);
+        });
 });
 
 app.get('/friendship/:id', function(req, res) {
@@ -69,6 +89,7 @@ app.get('/friendship/:id', function(req, res) {
 });
 
 app.post('/friendship/:id', (req, res) => {
+    console.log("post request friendship", req.body)
     if (req.body.friendshipStatus == 'friends') {
         db.deleteFriendship (req.session.userId, req.params.id)
             .then(UpdatedFriendshipInfo => {
@@ -124,6 +145,12 @@ app.post('/friendship/:id', (req, res) => {
                 () => res.sendStatus(500)
             );
     }
+});
+
+
+app.get('/logout', (req, res) => {
+    req.session.userId = null;
+    res.redirect("/welcome");
 });
 
 
@@ -273,12 +300,6 @@ app.get("/welcome", function(req, res) {
     }
 });
 
-app.get('/logout', (req, res) => {
-    req.session = null;
-    res.redirect('/welcome');
-});
-
-
 
 
 app.get('*', requireUser, function(req, res) {
@@ -293,6 +314,43 @@ function requireUser(req, res, next) {
         next();
     }
 }
-app.listen(8080, function() {
+server.listen(8080, function() {
     console.log("I'm listening.");
+});
+
+let onlineUsers;
+
+io.on('connection', function(socket) {
+    console.log(`socket with the id ${socket.id} is now connected`);
+
+
+    socket.on('disconnect', function() {
+        delete onlineUsers[socket.id];
+        io.emit('userLeft', userId)
+        console.log(`socket with the id ${socket.id} is now disconnected`);
+    });
+
+
+
+    socket.on('thanks', function(data) {
+        console.log(data);
+    });
+    // io.sockets.emit (for everyone)
+    // io.sockects.socket[.....] (for someone)
+    // socket.broadcast.emit("userjoined")
+
+
+
+    socket.emit('welcome', {
+        message: 'Welome. It is nice to see you'
+    });
+
+    socket.emit('onlineUsers', onlineUsers)
+
+    socket.on('chatMsg', data => {
+        store.dispatch()
+    })
+    // socket.on('privateMessage', data => {
+    //     io.sockets.sockets[data.socketId].emit('privateMessage'),
+    // })
 });

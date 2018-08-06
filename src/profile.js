@@ -18,12 +18,12 @@ class Profile extends Component{
             [e.target.name]: e.target.value
 
         }, () => {
-            console.log(this.state);
+            // console.log(this.state);
         });
     }
     handleSubmitTextarea(e) {
         e.preventDefault();
-        console.log("Running handleSubmit", this.state);
+        // console.log("Running handleSubmit", this.state);
         axios.post('/uploadBio', this.state)
             .then((resp) => {
                 if (resp.data.success) {
@@ -39,7 +39,6 @@ class Profile extends Component{
         const {
             first,
             last,
-            id,
             image,
             showBio,
             toggleShowBio,
@@ -65,7 +64,7 @@ class Profile extends Component{
 
                 { showBio
                     ? <form onSubmit={ this.handleSubmitTextarea } className="">
-                        <textarea name="bio" defaultValue={ bio } onChange={ this.handleChangeTextarea }></textarea>
+                        <textarea className="textArea" name="bio" defaultValue={ bio } onChange={ this.handleChangeTextarea }></textarea>
                         <button type="submit">Submit</button>
                     </form>
                     : bio

@@ -15,14 +15,14 @@ class Uploader extends React.Component {
             imageFile: e.target.files[0]
         });
         // console.log(this.imageVal);
-        console.log(this.state.imageFile.name);
+        // console.log(this.state.imageFile.name);
     }
     uploadPicture() {
         var formData = new FormData;
         formData.append('file', this.state.imageFile);
         axios.post('/upload', formData). then((res) => {
             if (res.data.success) {
-                console.log(res.data);
+                // console.log(res.data);
                 this.props.setImage(res.data.image);
                 // app.images.unshift(res.data.image);
             }
@@ -30,7 +30,7 @@ class Uploader extends React.Component {
     }
     render () {
         return (
-            <div id="Uploader">
+            <div id="uploader">
                 <input type="file" id="file-field" onChange={ this.imageSelected } />
                 <div className="imageInfo">
                     <div className="fieldEdit">

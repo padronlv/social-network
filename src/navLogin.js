@@ -12,6 +12,9 @@ function NavLogout(props) {
                         alt={ `${props.first} ${props.last}` }
                     />
                 </Link></li>
+                <li><Link to="/friends">Friends</Link></li>
+                <li><a href="/logout">Log Out</a></li>
+
             </ul>
         </nav>
     );
