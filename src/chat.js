@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { newMessageSocket } from'./sockets'
+import { newMessageSocket } from'./socket';
 
 
 
@@ -34,7 +34,7 @@ class Chat extends React.Component {
     handleSubmitTextarea(e) {
         e.preventDefault();
         // console.log("Running handleSubmit", this.state);
-        newMessageSocket(this.state.chatMessage)
+        newMessageSocket(this.state.chatMessage);
     }
 
     componentDidMount() {
@@ -44,15 +44,20 @@ class Chat extends React.Component {
         const { chatMessages } = this.props;
         // console.log("this.props", this.props);
         // console.log("friends", friends)
+        if (!chatMessages) {
+            return null;
+        }
+        let chatMessagesArray = chatMessages.slice(-10,)
         const chatDiv = (
             <div>
                 <h1>Chat</h1>
-                <div className="friendsDivOrWannabesDiv">
-                    {chatMessages.map(message => (
-                        <div key={message.date} className="friend">
-                            {/*<img className="OppPicture" src={message.profile_pic || '/images/default.png'} />*/}
-                            <div>{message.userId}</div>
-                            <div>{message.content}</div>
+                <div className="chatMessages">
+                    {chatMessagesArray.map(message => (
+                        <div key={message.date} className="message">
+                            <img className="pictureForChat" src={message.profilePic || '/images/default.png'} />
+                            <div className='userId'>{message.userId}</div>
+                            <div className='firstName'>{message.firstName}</div>
+                            <div className='content'>{message.content}</div>
                             <div>{message.date}</div>
                         </div>
                     ))}
@@ -65,16 +70,17 @@ class Chat extends React.Component {
         );
 
         return (
-            <div id="friendsWannabes">
-                {!chatMessages.length && <div>No messages yet</div>}
+            <div id="MessagesOrNot">
+                {/*{!chatMessages.length && <div>No messages there yet</div>}
                 {!!chatMessages.length && chatDiv}
-
+*/}
+                {chatDiv}
             </div>
         );
     }
 }
 export default connect(state => {
     return {
-        chatMessages: chatMessages,
+        chatMessages: state.chatMessages,
     };
 })(Chat);

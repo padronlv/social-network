@@ -335,7 +335,7 @@ io.on('connection', function(socket) {
         socket.emit("onlineUsers", users);
 
     });
-    socket.emit("chatMessages", chatMessages);
+    socket.emit("chatMessages", chatMessages.slice(-10,));
 
     if (
         Object.values(onlineUsers).filter(id => id == socket.request.session.userId).length == 1
@@ -372,14 +372,23 @@ io.on('connection', function(socket) {
     });
 
     socket.on('newMessage', function (newMessage) {
-        let completNewMessage = {
-            userId: socket.request.session.userId,
-            content: newMessage,
-            date: new Date()
-        };
+        db.getYourUserInfo(socket.request.session.userId).then(
+            data => {
+                let completNewMessage = {
+                    firstName: data.first_name,
+                    profilePic: data.profile_pic,
+                    userId: socket.request.session.userId,
+                    content: newMessage,
+                    date: new Date()
+                };
 
-        chatMessages = [...chatMessages, completNewMessage]
-        io.sockets.emit('newMessageBack', completNewMessage);
+                chatMessages = [...chatMessages, completNewMessage];
+                io.sockets.emit('newMessageBack', completNewMessage);
+
+            }).catch(error => {
+            console.log(error);
+        });
+
 
     })
 

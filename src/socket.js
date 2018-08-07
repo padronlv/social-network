@@ -19,13 +19,13 @@ export function init(store) {
         socket.on('userLeft', userId => {
             store.dispatch(userLeft(userId));
         });
-        // socket.on('chatMessages', chatMessages => {
-        //     store.dispatch(pushChatMessagesToRedux(chatMessages));
-        // });
-        //
-        // socket.on('newMessageBack', newMessage => {
-        //     store.dispatch(newMessageAction(newMessage));
-        // });
+        socket.on('chatMessages', chatMessages => {
+            store.dispatch(pushChatMessagesToRedux(chatMessages));
+        });
+
+        socket.on('newMessageBack', newMessage => {
+            store.dispatch(newMessageAction(newMessage));
+        });
     }
 // socket.emit('newMessage', newMessage => {
 //     store.dispatch(newMessage(newMessage));
