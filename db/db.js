@@ -263,3 +263,32 @@ module.exports.getUsersByIds = function(arrayOfIds) {
             return results.rows;
         });
 };
+module.exports.getComments = function (userId) {
+    const q = `
+    SELECT * FROM comments WHERE user_id = $1 ORDER BY id DESC
+    `;
+    const params = [userId];
+    return db.query(q, params)
+        .then(results => {
+            // console.log(results.rows);
+            return(results.rows);
+        }).catch(err => {
+            console.log(err);
+        });
+};
+module.exports.addComment = function (userId, writterId, comment) {
+    const q = `
+        INSERT INTO comments (user_id, writter_id, comment)
+            VALUES ($1, $2, $3)
+            RETURNING *
+    `;
+    const params = [ userId || null , writterId || null, comment || null];
+    return db.query(q, params)
+        .then(results => {
+            return results.rows[0];
+        })
+        .catch(err => {
+            // console.log("this is workinggggggggggggggggg");
+            return Promise.reject(err);
+        });
+};

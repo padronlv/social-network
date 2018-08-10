@@ -18,7 +18,7 @@ const config = require('./config');
 app.use(cookieParser());
 
 const cookieSessionMiddleware = cookieSession({
-    secret: `I'm always angry.`,
+    secret: `Im always angry.`,
     maxAge: 1000 * 60 * 60 * 24 * 90
 });
 
@@ -53,6 +53,7 @@ if (process.env.NODE_ENV != 'production') {
 
 // app.get('/user', async(req, res) => )
 
+
 app.get('/user', function(req, res) {
     db.getYourUserInfo(req.session.userId).then(
         data => {
@@ -66,6 +67,36 @@ app.get('/user', function(req, res) {
         console.log(error);
     });
 });
+
+app.get('/comments/:id', function(req, res) {
+    db.getComments(req.params.id)
+        .then(
+            comments => {
+                // console.log("data get your user info ", data);
+                res.json({
+                    success: true,
+                    comments
+                });
+            }).catch(error => {
+            console.log(error);
+        });
+});
+
+app.post('/uploadComment/:id', (req, res) => {
+    console.log(req.params.id, req.session.userId, req.body.comment)
+    db.addComment(req.params.id, req.session.userId, req.body.comment)
+        .then(comment => {
+            // console.log(image);
+            res.json ({
+                success: true,
+                comment
+            });
+        }).catch(
+            (e) => console.log(e)
+        );
+});
+
+
 
 app.get('/friendsList', function(req, res) {
     // console.log("app get friendsList");
@@ -84,7 +115,7 @@ app.get('/friendsList', function(req, res) {
 app.get('/friendship/:id', function(req, res) {
     db.checkFriendship(req.session.userId, req.params.id)
         .then(data => {
-            console.log(data);
+            // console.log(data);
             res.json(data);
         })
         .catch(error => {
@@ -100,7 +131,7 @@ app.post('/friendship/:id', (req, res) => {
                 // console.log(image);
                 res.json ({
                     success: true,
-                    status: null,
+                    // status: null,
                     buttonText: 'send a friend request',
                     info: UpdatedFriendshipInfo
                 });
@@ -232,12 +263,12 @@ app.post('/registration', (req, res) => {
         || req.body.email == ""
         || req.body.password == ""
     ) {
-        console.log("empty");
+        // console.log("empty");
         return res.json({
             error: "Please, fill in all the fields"
         });
     } else {
-        console.log("inside POST /registration", req.body);
+        // console.log("inside POST /registration", req.body);
         bc.hashPassword(req.body.password)
             .then(hashedPassword => {
                 console.log("hashedPassword: ", hashedPassword);
@@ -265,19 +296,19 @@ app.post('/login', (req, res) => {
     db.getYourUserByEmail(req.body.email)
         .then(user => {
             if(user == undefined) {
-                console.log("posting is working");
+                // console.log("posting is working");
                 res.json({
                     error: "The Email doesn't match any user"
                 });
             } else {
                 bc.checkPassword(req.body.password, user.hashed_password)
                     .then(doThePasswordsMatch => {
-                        console.log("doThePasswordsMatch: ", doThePasswordsMatch);
+                        // console.log("doThePasswordsMatch: ", doThePasswordsMatch);
                         if (doThePasswordsMatch) {
                             req.session.userId = user.id;
                             res.json(user);
                         } else {
-                            console.log("false password page");
+                            // console.log("false password page");
                             res.json({
                                 error: "The password is wrong, please try again"
                             });
@@ -326,16 +357,16 @@ let onlineUsers = {};
 let chatMessages = [];
 
 io.on('connection', function(socket) {
-    console.log(`socket with the id ${socket.id} is now connected`);
-    console.log(`socket with the id ${socket.request.session.userId} is now connected`);
+    // console.log(`socket with the id ${socket.id} is now connected`);
+    // console.log(`socket with the id ${socket.request.session.userId} is now connected`);
     onlineUsers[socket.id]= socket.request.session.userId;
     // console.log(onlineUsers);
     db.getUsersByIds(Object.values(onlineUsers)).then(users => {
-        console.log('users in dbquery for socket', users);
+        // console.log('users in dbquery for socket', users);
         socket.emit("onlineUsers", users);
 
     });
-    socket.emit("chatMessages", chatMessages.slice(-10,));
+    socket.emit("chatMessages", chatMessages.slice(-10));
 
     if (
         Object.values(onlineUsers).filter(id => id == socket.request.session.userId).length == 1
@@ -390,7 +421,7 @@ io.on('connection', function(socket) {
         });
 
 
-    })
+    });
 
 
 

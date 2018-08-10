@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from './axios';
 import FriendshipButton from './friendshipButton';
+import Wall from './wall';
 
 class Opp extends Component {
     constructor(props) {
@@ -19,28 +20,35 @@ class Opp extends Component {
                     this.setState(data);
                 }
             });
+
     }
     render() {
         const {
             first_name,
             last_name,
-            id,
-            image,
+            profile_pic,
             bio
         } = this.state;
 
 
         return (
             <div id="otherProfile">
-                <h1>Profile</h1>
-                <p>{ first_name } { last_name }</p>
+                <div className='profileLeft'>
+                    <div className="bigName">
+                        { first_name } { last_name }
+                    </div>
+                    <img className="OppPicture" src={profile_pic || '/images/default.png'} />
+                    <div className='bioOperator'>
+                        { bio
+                            ? <div className='realBio'>{ bio }</div>
+                            : <div>This person does not have a Bio</div>
+                        }
+                    </div>
+                    <FriendshipButton otherUserId={ this.props.match.params.id } />
+                </div>
+                <Wall otherUserId={ this.props.match.params.id }/>
 
-                { bio
-                    ? <p> { bio } </p>
-                    : <p> this user does not have a bio </p>
-                }
 
-                <FriendshipButton otherUserId={ this.props.match.params.id } />
             </div>
         );
     }

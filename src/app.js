@@ -74,7 +74,7 @@ class App extends React.Component {
                         <NavLogin image={image}
                             first={first}
                             last={last} />
-                        <Route path='/profile' render={() => (
+                        <Route exact path='/' render={() => (
                             <Profile
                                 id={ id }
                                 first={ first }

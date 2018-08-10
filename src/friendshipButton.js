@@ -62,7 +62,7 @@ class FriendshipButton extends Component {
     render() {
         return (
             <div id="friendshipButton">
-                <button onClick={this.clickFriendshipButton} className="friendshipbutton">{this.state.buttonText}</button>
+                <button onClick={this.clickFriendshipButton} className="submitButton">{this.state.buttonText}</button>
             </div>
 
         );

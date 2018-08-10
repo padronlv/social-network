@@ -2,19 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { newMessageSocket } from'./socket';
 
-
-
-
-// import {emitChatMessage } form './sockets'
-//
-// handleClick(newMsg) {
-//
-// }
-//
-//
-//
-//
-// export function emitChatMessage
 class Chat extends React.Component {
     constructor() {
         super();
@@ -47,34 +34,34 @@ class Chat extends React.Component {
         if (!chatMessages) {
             return null;
         }
-        let chatMessagesArray = chatMessages.slice(-10,)
+        let chatMessagesArray = chatMessages.slice(-10,);
         const chatDiv = (
             <div>
-                <h1>Chat</h1>
+
                 <div className="chatMessages">
                     {chatMessagesArray.map(message => (
                         <div key={message.date} className="message">
                             <img className="pictureForChat" src={message.profilePic || '/images/default.png'} />
-                            <div className='userId'>{message.userId}</div>
-                            <div className='firstName'>{message.firstName}</div>
-                            <div className='content'>{message.content}</div>
-                            <div>{message.date}</div>
+                            <div className="commentRight">
+                                <div className='firstName'>Created at {message.date} by {message.firstName}</div>
+                                <div className='content'>{message.content}</div>
+                            </div>
                         </div>
                     ))}
-                    <form onSubmit={ this.handleSubmitTextarea } className="">
-                        <textarea className="textArea" name="chatMessage" onChange={ this.handleChangeTextarea }></textarea>
-                        <button type="submit">Send Message</button>
-                    </form>
                 </div>
             </div>
         );
 
         return (
             <div id="MessagesOrNot">
-                {/*{!chatMessages.length && <div>No messages there yet</div>}
+                <h1>Chat</h1>
+                {!chatMessages.length && <div>Chat is empty, start a new conversation!</div>}
                 {!!chatMessages.length && chatDiv}
-*/}
-                {chatDiv}
+
+                <form onSubmit={ this.handleSubmitTextarea } className="">
+                    <textarea className="textAreaChat" name="chatMessage" onChange={ this.handleChangeTextarea }></textarea>
+                    <button className="submitButton" type="submit">Send Message</button>
+                </form>
             </div>
         );
     }

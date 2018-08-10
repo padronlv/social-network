@@ -9,7 +9,7 @@ function Welcome() {
         <div id="welcome">
             <HashRouter>
                 <div>
-                    <NavLogout />
+                    {/*<NavLogout />*/}
                     <div className="welcomeNoNav">
                         <h1>Welcome!</h1>
                         <img className="bigLogo" src="./images/logo.png" />

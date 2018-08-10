@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import axios from './axios';
 import ProfilePic from './profilepic';
 import Uploader from './uploader';
+import Wall from './wall';
 
 class Profile extends Component{
     constructor() {
@@ -37,6 +38,7 @@ class Profile extends Component{
 
     render() {
         const {
+            id,
             first,
             last,
             image,
@@ -51,29 +53,33 @@ class Profile extends Component{
 
         return (
             <div id="profile">
-                <h1>Profile</h1>
-                <p>{ first } { last }</p>
-                <ProfilePic
-                    image={image}
-                    first={first}
-                    last={last}
-                    clickHandler={showUploader}
-                />
-                {uploaderIsVisible && <Uploader setImage={setImage} />}
-
-
-                { showBio
-                    ? <form onSubmit={ this.handleSubmitTextarea } className="">
-                        <textarea className="textArea" name="bio" defaultValue={ bio } onChange={ this.handleChangeTextarea }></textarea>
-                        <button type="submit">Submit</button>
-                    </form>
-                    : bio
-                        ? <div>
-                            <p> { bio } </p>
-                            <p onClick={ toggleShowBio }> Click to edit your bio </p>
-                        </div>
-                        : <p onClick={ toggleShowBio }>Click to add a bio</p>
-                }
+                <div className='profileLeft'>
+                    <div className="bigName">
+                        Your profile
+                    </div>
+                    <ProfilePic
+                        image={image}
+                        first={first}
+                        last={last}
+                        clickHandler={showUploader}
+                    />
+                    {uploaderIsVisible && <Uploader setImage={setImage} />}
+                    <div className='bioOperator'>
+                        { showBio
+                            ? <form onSubmit={ this.handleSubmitTextarea } className="">
+                                <textarea className="textAreaBio" name="bio" defaultValue={ bio } onChange={ this.handleChangeTextarea }></textarea>
+                                <button className='submitButton' type="submit">Send Bio</button>
+                            </form>
+                            : bio
+                                ? <div className='realBio'>
+                                    <p> { bio } </p>
+                                    <p onClick={ toggleShowBio }> Click to edit your bio </p>
+                                </div>
+                                : <p onClick={ toggleShowBio }>Click to add a bio</p>
+                        }
+                    </div>
+                </div>
+                <Wall otherUserId={ id }/>
             </div>
         );
     }
